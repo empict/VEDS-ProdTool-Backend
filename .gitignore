@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Prevent accidental Node frontend inside backend
+node_modules/
+package.json
+package-lock.json

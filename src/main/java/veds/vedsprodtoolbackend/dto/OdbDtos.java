@@ -1,90 +1,88 @@
 package veds.vedsprodtoolbackend.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO’s voor ODB API responses.
- *
- * Let op: velden zijn public voor makkelijke (de)serialisatie.
- */
 public class OdbDtos {
 
-    /** Kleine naam+pad pair, voor de layer-keuzes. */
+    // -------------------------------------------------------------
+    // NamePath for Top/Bottom selection
+    // -------------------------------------------------------------
     public static class NamePath {
         public String name;
         public String path;
 
-        public NamePath() {}
         public NamePath(String name, String path) {
             this.name = name;
             this.path = path;
         }
     }
 
-    /** Response voor de layer-chooser modal. */
+    // -------------------------------------------------------------
+    // LayersFilesResponse
+    // -------------------------------------------------------------
     public static class LayersFilesResponse {
         public String board;
-        public List<NamePath> top = new ArrayList<>();
-        public List<NamePath> bottom = new ArrayList<>();
-        public List<NamePath> other = new ArrayList<>();
+        public List<NamePath> top;
+        public List<NamePath> bottom;
+        public List<NamePath> other;
 
-        public LayersFilesResponse() {}
-
-        public LayersFilesResponse(String board, List<NamePath> top, List<NamePath> bottom, List<NamePath> other) {
+        public LayersFilesResponse(String board,
+                                   List<NamePath> top,
+                                   List<NamePath> bottom,
+                                   List<NamePath> other) {
             this.board = board;
-            if (top != null)    this.top    = top;
-            if (bottom != null) this.bottom = bottom;
-            if (other != null)  this.other  = other;
+            this.top = top;
+            this.bottom = bottom;
+            this.other = other;
         }
     }
 
-    /** Rij in de parts table (moet aansluiten op je frontend). */
+    // -------------------------------------------------------------
+    // Row = één component
+    // -------------------------------------------------------------
     public static class Row {
-        public String partName = "";
-        public String odoo = "";
-        public String alt = "";
-        public String pins = "";
-        public String stock = "";
-        public String type = "";
-        public String mounting = "";    // "SMD" / "THT"
-        public String side = "";        // "top" / "bot"
-        public String description = "";
 
-        public String qty = "";         // aantal in deze groep
-        public String key = "";         // grouping key (voor refs)
-        public String sourceLayer = ""; // uit welke layer
+        // 🔥 nieuwe velden (verplicht!)
+        public String layer;              // bv. "top/comp_+_top/components"
+        public List<String> refdesList;   // alle refdes: ["R1","R2","R3"]
 
-        // checkbox-kolommen
-        public String nop = "";
-        public String hand = "";
-        public String skip = "";
+        public String key;          // uniek ID: REF@layer
+        public String refdes;       // hoofd-refdes (bv. R1)
+        public String partName;
+        public String description;
+        public String mounting;
+        public String qty;
+
+        // Database-enrichment velden
+        public String odoo;
+        public String alt;
+        public String stock;
+        public String type;
+        public String pins;
 
         public Row() {}
     }
 
-    /** Optionele PDF payload als data-URL (nu niet gebruikt, maar interface-vriendelijk). */
-    public static class PdfAttachment {
-        public String filename;
-        public String dataUrl;
+    // -------------------------------------------------------------
+    // RowsResponse wrapper
+    // -------------------------------------------------------------
+    public static class RowsResponse {
+        public List<Row> rows;
+        public String pdf;
 
-        public PdfAttachment() {}
-        public PdfAttachment(String filename, String dataUrl) {
-            this.filename = filename;
-            this.dataUrl = dataUrl;
+        public RowsResponse(List<Row> rows, String pdf) {
+            this.rows = rows;
+            this.pdf = pdf;
         }
     }
+    // -------------------------------------------------------------
+    // RefdesResponse – gebruikt door /api/v1/odb/refs
+    // -------------------------------------------------------------
+    public static class RefdesResponse {
+        public List<String> refs;
 
-    /** Response met rijen (+ optionele PDF). */
-    public static class RowsResponse {
-        public List<Row> rows = new ArrayList<>();
-        public PdfAttachment pdf; // kan null zijn
-
-        public RowsResponse() {}
-
-        public RowsResponse(List<Row> rows, PdfAttachment pdf) {
-            if (rows != null) this.rows = rows;
-            this.pdf = pdf;
+        public RefdesResponse(List<String> refs) {
+            this.refs = refs;
         }
     }
 }
